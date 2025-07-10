@@ -169,12 +169,12 @@ func (p *provider) Get(actionId string) (string, string, error) {
 
 	// --- --- ---
 
-	var cacheEntry = &s3.GetObjectInput{
+	obj := &s3.GetObjectInput{
 		Bucket: &p.config.Cos.Bucket,
 		Key:    ptr(p.actionKey(actionId)),
 	}
 
-	res, err := p.client.GetObject(cacheEntry)
+	res, err := p.client.GetObject(obj)
 	if err != nil {
 		return notFound()
 	}
@@ -223,7 +223,6 @@ func (p *provider) Put(actionId string, objectId string, body io.Reader) (string
 	}
 
 	size := fi.Size()
-
 	if size < p.config.MinUploadSize {
 		return diskpath, nil
 	}
@@ -234,7 +233,7 @@ func (p *provider) Put(actionId string, objectId string, body io.Reader) (string
 	}
 	defer func() { _ = file.Close() }()
 
-	_, err = p.client.PutObject(&s3.PutObjectInput{
+	obj := &s3.PutObjectInput{
 		Bucket: &p.config.Cos.Bucket,
 		Key:    ptr(p.actionKey(actionId)),
 
@@ -245,9 +244,12 @@ func (p *provider) Put(actionId string, objectId string, body io.Reader) (string
 
 		Body:          file,
 		ContentLength: &size,
-	})
+	}
 
-	return diskpath, err
+	// Ignore upload failures to COS and just rely on the local object
+	_, _ = p.client.PutObject(obj)
+
+	return diskpath, nil
 }
 
 func (p *provider) Close() error {
