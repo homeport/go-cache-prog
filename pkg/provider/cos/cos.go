@@ -37,7 +37,7 @@ import (
 )
 
 const DefaultAuthEndpoint = "https://iam.cloud.ibm.com/identity/token"
-const DefaultMinUploadSize = 1024
+const DefaultMinUploadSize = 2048
 
 const objectIdKey = "objectid"
 const sizeKey = "size"
