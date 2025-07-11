@@ -44,7 +44,7 @@ func ExecuteE() error {
 }
 
 func init() {
-	rootCmd.PersistentFlags().IntVar(&rootCmdSettings.workers, "concurrent", runtime.NumCPU(), "limit of concurrent processing")
+	rootCmd.PersistentFlags().IntVar(&rootCmdSettings.workers, "concurrent", 2*runtime.NumCPU(), "limit of concurrent processing")
 	rootCmd.PersistentFlags().StringVar(&rootCmdSettings.logfile, "logfile", "", "write logs into file")
 
 	_ = rootCmd.PersistentFlags().MarkHidden("logfile")
