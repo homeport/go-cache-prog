@@ -9,7 +9,7 @@ require (
 	github.com/gonvenience/term v1.0.4
 	github.com/olekukonko/tablewriter v1.0.8
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/sync v0.15.0
+	golang.org/x/sync v0.16.0
 )
 
 require (
