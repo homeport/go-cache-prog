@@ -21,42 +21,30 @@
 package cmd
 
 import (
-	"os"
-	"path/filepath"
-	"runtime"
-
+	"github.com/gonvenience/bunt"
 	"github.com/spf13/cobra"
 )
 
-var name = func() string {
-	ep, err := os.Executable()
-	if err != nil {
-		return "go-cache-prog"
-	}
+// version string will be injected by automation
+var version string
 
-	return filepath.Base(ep)
-}()
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Args:  cobra.MaximumNArgs(0),
+	Short: "Shows the version",
+	Long:  `Shows the version`,
+	Run: func(_ *cobra.Command, _ []string) {
+		if len(version) == 0 {
+			version = "(development)"
+		}
 
-type rootCmdOpts struct {
-	logfile string
-	workers int
-}
-
-var rootCmdSettings rootCmdOpts
-
-var rootCmd = &cobra.Command{
-	Use:   "go-cache-prog",
-	Short: "Implementation of a Go Cache program (GOCACHEPROG)",
-	Long:  `Implementation of a Go Cache program (GOCACHEPROG)`,
-}
-
-func ExecuteE() error {
-	return rootCmd.Execute()
+		// #nosec G104
+		// nolint:all
+		bunt.Printf("LightSteelBlue{*%s*} version DimGray{%s}\n", name, version)
+	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().IntVar(&rootCmdSettings.workers, "concurrent", 2*runtime.NumCPU(), "limit of concurrent processing")
-	rootCmd.PersistentFlags().StringVar(&rootCmdSettings.logfile, "logfile", "", "write logs into file")
-
-	_ = rootCmd.PersistentFlags().MarkHidden("logfile")
+	rootCmd.AddCommand(versionCmd)
 }
