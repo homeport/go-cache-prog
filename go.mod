@@ -4,12 +4,8 @@ go 1.23.0
 
 require (
 	github.com/IBM/ibm-cos-sdk-go v1.12.2
-	github.com/avast/retry-go/v4 v4.6.1
 	github.com/gonvenience/bunt v1.4.2
-	github.com/gonvenience/term v1.0.4
-	github.com/olekukonko/tablewriter v1.0.8
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/sync v0.16.0
 )
 
 require (
@@ -22,6 +18,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.27.0 // indirect
+	github.com/gonvenience/term v1.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
@@ -30,15 +27,10 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-ciede2000 v0.0.0-20170301095244-782e8c62fec3 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/olekukonko/errors v1.1.0 // indirect
-	github.com/olekukonko/ll v0.0.9 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	golang.org/x/crypto v0.40.0 // indirect
