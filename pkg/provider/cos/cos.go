@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
@@ -47,6 +48,7 @@ type provider struct {
 	client *s3.S3
 
 	localProvider cache.Provider
+	uploadGroup   *sync.WaitGroup
 }
 
 type Config struct {
@@ -131,6 +133,7 @@ func NewProvider(config Config) (*provider, error) {
 		client:        client,
 		config:        config,
 		localProvider: localProvider,
+		uploadGroup:   &sync.WaitGroup{},
 	}, nil
 }
 
@@ -227,27 +230,30 @@ func (p *provider) Put(actionId string, objectId string, body io.Reader) (string
 		return diskpath, nil
 	}
 
-	file, err := os.Open(diskpath) // #nosec G304 - provider takes care of filepath clean call
-	if err != nil {
-		return "", err
-	}
-	defer func() { _ = file.Close() }()
-
-	obj := &s3.PutObjectInput{
-		Bucket: &p.config.Cos.Bucket,
-		Key:    ptr(p.actionKey(actionId)),
-
-		Metadata: map[string]*string{
-			objectIdKey: &objectId,
-			sizeKey:     ptr(strconv.FormatInt(size, 10)),
-		},
-
-		Body:          file,
-		ContentLength: &size,
-	}
-
 	// Ignore upload failures to COS and just rely on the local object
-	_, _ = p.client.PutObject(obj)
+	p.uploadGroup.Add(1)
+	go func() {
+		defer p.uploadGroup.Done()
+
+		file, err := os.Open(diskpath) // #nosec G304 - provider takes care of filepath clean call
+		if err != nil {
+			return
+		}
+		defer func() { _ = file.Close() }()
+
+		_, _ = p.client.PutObject(&s3.PutObjectInput{
+			Bucket: &p.config.Cos.Bucket,
+			Key:    ptr(p.actionKey(actionId)),
+
+			Metadata: map[string]*string{
+				objectIdKey: &objectId,
+				sizeKey:     ptr(strconv.FormatInt(size, 10)),
+			},
+
+			Body:          file,
+			ContentLength: &size,
+		})
+	}()
 
 	return diskpath, nil
 }
@@ -259,6 +265,7 @@ func (p *provider) Close() error {
 		return err
 	}
 
+	p.uploadGroup.Wait()
 	p.client.Config.HTTPClient.CloseIdleConnections()
 	return nil
 }
