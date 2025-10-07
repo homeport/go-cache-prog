@@ -1,6 +1,6 @@
 module github.com/homeport/go-cache-prog
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/IBM/ibm-cos-sdk-go v1.12.2
@@ -34,10 +34,10 @@ require (
 	github.com/spf13/pflag v1.0.7 // indirect
 	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	golang.org/x/crypto v0.40.0 // indirect
-	golang.org/x/net v0.42.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/term v0.33.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/crypto v0.42.0 // indirect
+	golang.org/x/net v0.45.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/term v0.35.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
