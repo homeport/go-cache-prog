@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/IBM/ibm-cos-sdk-go v1.12.2
 	github.com/gonvenience/bunt v1.4.3
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.2
 )
 
 require (
@@ -30,7 +30,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/spf13/pflag v1.0.7 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	go.mongodb.org/mongo-driver v1.17.6 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/crypto v0.47.0 // indirect
