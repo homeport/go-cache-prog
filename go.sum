@@ -32,8 +32,8 @@ github.com/go-playground/validator/v10 v10.28.0 h1:Q7ibns33JjyW48gHkuFT91qX48KG0
 github.com/go-playground/validator/v10 v10.28.0/go.mod h1:GoI6I1SjPBh9p7ykNE/yj3fFYbyDOpwMn5KXd+m2hUU=
 github.com/go-task/slim-sprig/v3 v3.0.0 h1:sUs3vkvUymDpBKi3qH1YSqBQk9+9D/8M2mN1vB6EwHI=
 github.com/go-task/slim-sprig/v3 v3.0.0/go.mod h1:W848ghGpv3Qj3dhTPRyJypKRiqCdHZiAzKg9hl15HA8=
-github.com/go-viper/mapstructure/v2 v2.4.0 h1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=
-github.com/go-viper/mapstructure/v2 v2.4.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
+github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
+github.com/go-viper/mapstructure/v2 v2.5.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
 github.com/gonvenience/bunt v1.4.3 h1:MLd8YWu1Vl1tiL+XfXJvVA9kL71yQT0N+x7gXVH9H7w=
 github.com/gonvenience/bunt v1.4.3/go.mod h1:ggA6odP6FNOh50mGxxytSSJTs2Ghy5Veq9wIVSbuoAw=
 github.com/gonvenience/term v1.0.5 h1:PYfBH7FB1V+tuuJl4KYrqG/tzAOUnvTy8IFa9YqYrJY=
