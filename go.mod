@@ -3,7 +3,7 @@ module github.com/homeport/go-cache-prog
 go 1.24.0
 
 require (
-	github.com/IBM/ibm-cos-sdk-go v1.12.2
+	github.com/IBM/ibm-cos-sdk-go v1.13.0
 	github.com/gonvenience/bunt v1.4.3
 	github.com/spf13/cobra v1.9.1
 )
