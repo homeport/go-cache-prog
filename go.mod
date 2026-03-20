@@ -10,7 +10,7 @@ require (
 
 require (
 	github.com/IBM/go-sdk-core/v5 v5.21.2 // indirect
-	github.com/fatih/color v1.18.0 // indirect
+	github.com/fatih/color v1.19.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/go-openapi/errors v0.22.7 // indirect
 	github.com/go-openapi/strfmt v0.26.1 // indirect
@@ -27,6 +27,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
 	github.com/mattn/go-ciede2000 v0.0.0-20170301095244-782e8c62fec3 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.1 // indirect
