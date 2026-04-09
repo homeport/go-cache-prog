@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/homeport/go-cache-prog/pkg/cache"
 	"github.com/homeport/go-cache-prog/pkg/provider/cos"
@@ -74,7 +75,7 @@ func init() {
 	rootCmd.AddCommand(cosCmd)
 
 	cosCmd.Flags().SortFlags = false
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.CacheDir, "cache-dir", "/tmp/go-cache", "location of the local cache directory")
+	cosCmd.Flags().StringVar(&cosCmdSettings.config.CacheDir, "cache-dir", filepath.Join(os.TempDir(), "go-cache"), "location of the local cache directory")
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.AuthEndpoint, "auth-endpoint", cos.DefaultAuthEndpoint, "specific IBM IAM Authentication Server Endpoint")
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Endpoint, "endpoint", "", "specify URL endpoint of the COS instance")
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.ResourceInstanceId, "resource-instance-id", "", "specify resource instance id of the COS instance")
