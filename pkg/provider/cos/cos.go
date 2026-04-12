@@ -30,15 +30,16 @@ import (
 	"time"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
-	"github.com/IBM/ibm-cos-sdk-go/aws/credentials/ibmiam"
+	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
 	"github.com/IBM/ibm-cos-sdk-go/aws/session"
 	"github.com/IBM/ibm-cos-sdk-go/service/s3"
 	"github.com/homeport/go-cache-prog/pkg/cache"
 	"github.com/homeport/go-cache-prog/pkg/provider/local"
 )
 
-const DefaultAuthEndpoint = "https://iam.cloud.ibm.com/identity/token"
 const DefaultMinUploadSize = 2048
+const DefaultTimeout = 5 * time.Second
+const DefaultMaxRetries = 2
 
 const objectIdKey = "objectid"
 const sizeKey = "size"
@@ -52,18 +53,21 @@ type provider struct {
 }
 
 type Config struct {
-	Cos           Cos
-	CacheDir      string
-	MinUploadSize int64
+	Cos           Cos    `json:"cos"`
+	CacheDir      string `json:"cache_dir"`
+	MinUploadSize int64  `json:"min_upload_size"`
 }
 
 type Cos struct {
-	AuthEndpoint string
-	ApiKey       string
+	Endpoint string `json:"endpoint"`
+	Region   string `json:"region"`
+	Bucket   string `json:"bucket"`
 
-	Endpoint           string
-	ResourceInstanceId string
-	Bucket             string
+	AccessKeyID     string `json:"access_key_id"`
+	SecretAccessKey string `json:"secret_access_key"`
+
+	Timeout    time.Duration `json:"timeout"`
+	MaxRetries int           `json:"max_retries"`
 }
 
 var _ cache.Provider = &provider{}
@@ -81,8 +85,16 @@ func NewProvider(config Config) (*provider, error) {
 		return nil, fmt.Errorf("cache directory cannot be empty")
 	}
 
+	if config.Cos.Timeout == 0 {
+		config.Cos.Timeout = DefaultTimeout
+	}
+
 	if config.MinUploadSize <= 0 {
 		config.MinUploadSize = DefaultMinUploadSize
+	}
+
+	if config.Cos.MaxRetries == 0 {
+		config.Cos.MaxRetries = DefaultMaxRetries
 	}
 
 	localProvider, err := local.NewProvider(config.CacheDir)
@@ -99,18 +111,18 @@ func NewProvider(config Config) (*provider, error) {
 		session,
 		aws.NewConfig().
 			WithEndpoint(config.Cos.Endpoint).
-			WithCredentials(ibmiam.NewStaticCredentials(
-				aws.NewConfig(),
-				config.Cos.AuthEndpoint,
-				config.Cos.ApiKey,
-				config.Cos.ResourceInstanceId,
-			)).
+			WithRegion(config.Cos.Region).
+			WithCredentials(credentials.NewStaticCredentialsFromCreds(credentials.Value{
+				AccessKeyID:     config.Cos.AccessKeyID,
+				SecretAccessKey: config.Cos.SecretAccessKey,
+			})).
 			WithLowerCaseHeaderMaps(true).
 			WithS3ForcePathStyle(true).
 			WithHTTPClient(&http.Client{
-				Timeout: 5 * time.Second,
+				Timeout: config.Cos.Timeout,
 			}).
-			WithMaxRetries(2))
+			WithMaxRetries(config.Cos.MaxRetries),
+	)
 
 	listBucketResp, err := client.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {

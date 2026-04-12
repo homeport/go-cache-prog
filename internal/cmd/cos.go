@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -43,19 +45,19 @@ var cosCmd = &cobra.Command{
 	SilenceErrors: true,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		envConfig(&cosCmdSettings.config.Cos.ApiKey, "GO_CACHE_PROG_COS_APIKEY")
-		envConfig(&cosCmdSettings.config.Cos.AuthEndpoint, "GO_CACHE_PROG_COS_AUTHENDPOINT")
-		envConfig(&cosCmdSettings.config.Cos.Endpoint, "GO_CACHE_PROG_COS_ENDPOINT")
-		envConfig(&cosCmdSettings.config.Cos.ResourceInstanceId, "GO_CACHE_PROG_COS_RESOURCEINSTANCEID")
-		envConfig(&cosCmdSettings.config.Cos.Bucket, "GO_CACHE_PROG_COS_BUCKET")
+		mapOsEnvToConfig("GO_CACHE_PROG_COS_CONFIG", &cosCmdSettings.config)
+		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ENDPOINT", &cosCmdSettings.config.Cos.Endpoint)
+		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_REGION", &cosCmdSettings.config.Cos.Region)
+		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_BUCKET", &cosCmdSettings.config.Cos.Bucket)
+		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ACCESSKEYID", &cosCmdSettings.config.Cos.AccessKeyID)
+		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_SECRETACCESSKEY", &cosCmdSettings.config.Cos.SecretAccessKey)
 
 		provider, err := cos.NewProvider(cosCmdSettings.config)
 		if err != nil {
 			return err
 		}
 
-		handler := cache.New(os.Stdin, os.Stdout, provider).
-			WithConcurrentWorkers(rootCmdSettings.workers)
+		handler := cache.New(os.Stdin, os.Stdout, provider).WithConcurrentWorkers(rootCmdSettings.workers)
 
 		if rootCmdSettings.logfile != "" {
 			file, err := os.OpenFile(rootCmdSettings.logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
@@ -73,20 +75,33 @@ var cosCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cosCmd)
-
 	cosCmd.Flags().SortFlags = false
+
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.CacheDir, "cache-dir", filepath.Join(os.TempDir(), "go-cache"), "location of the local cache directory")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.AuthEndpoint, "auth-endpoint", cos.DefaultAuthEndpoint, "specific IBM IAM Authentication Server Endpoint")
+
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Endpoint, "endpoint", "", "specify URL endpoint of the COS instance")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.ResourceInstanceId, "resource-instance-id", "", "specify resource instance id of the COS instance")
+	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Region, "region", "", "specify region of the COS instance")
+	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.AccessKeyID, "access-key-id", "", "specify access key id of the COS instance")
+	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.SecretAccessKey, "secret-access-key", "", "specify secret access key of the COS instance")
 	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Bucket, "bucket", "", "specify bucket to be used")
 }
 
-func envConfig(target *string, key string) {
+func mapOsEnvToVarIfSet(key string, target *string) {
 	val, found := os.LookupEnv(key)
 	if !found {
 		return
 	}
 
 	*target = val
+}
+
+func mapOsEnvToConfig(key string, target *cos.Config) {
+	val, found := os.LookupEnv(key)
+	if !found {
+		return
+	}
+
+	if err := json.Unmarshal([]byte(val), target); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to parse configuration from environment variable %q: %v", key, err)
+	}
 }
