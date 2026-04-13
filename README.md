@@ -13,18 +13,19 @@ This is a proof-of-concept tool and subject to change.
 
 ## Usage
 
-Log into your IBM Cloud account and create a new COS instance in a region that is close to your location to minimize time of objects spend in transit. Create a bucket in your COS instance to be used as the cache. Setup your shell to use `go-cache-prog` by exporting the following environment variables:
+Log into your IBM Cloud account and create a new COS instance in a region that is close to your location to minimize time of objects spend in transit. Create a bucket in your COS instance to be used as the cache. Generate HMAC credentials for your COS instance. Setup your shell to use `go-cache-prog` by exporting the following environment variables:
 
 ```sh
-export GO_CACHE_PROG_COS_APIKEY=<apikey-that-has-permission-to-access-cos>
 export GO_CACHE_PROG_COS_ENDPOINT=s3.<region>.cloud-object-storage.appdomain.cloud
-export GO_CACHE_PROG_COS_RESOURCEINSTANCEID=<crn-of-cos>
+export GO_CACHE_PROG_COS_REGION=<region>
 export GO_CACHE_PROG_COS_BUCKET=<bucket-name>
+export GO_CACHE_PROG_COS_ACCESSKEYID=<access-key-id>
+export GO_CACHE_PROG_COS_SECRETACCESSKEY=<secret-access-key>
 
 export GOCACHEPROG="go-cache-prog cos"
 ```
 
-The endpoint, resource instance ID and bucket can alternatively be configured via command-line flags, too.
+The endpoint, region, bucket, and credentials can alternatively be configured via command-line flags, too.
 
 ## Installation
 
