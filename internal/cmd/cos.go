@@ -45,13 +45,6 @@ var cosCmd = &cobra.Command{
 	SilenceErrors: true,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mapOsEnvToConfig("GO_CACHE_PROG_COS_CONFIG", &cosCmdSettings.config)
-		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ENDPOINT", &cosCmdSettings.config.Cos.Endpoint)
-		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_REGION", &cosCmdSettings.config.Cos.Region)
-		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_BUCKET", &cosCmdSettings.config.Cos.Bucket)
-		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ACCESSKEYID", &cosCmdSettings.config.Cos.AccessKeyID)
-		mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_SECRETACCESSKEY", &cosCmdSettings.config.Cos.SecretAccessKey)
-
 		provider, err := cos.NewProvider(cosCmdSettings.config)
 		if err != nil {
 			return err
@@ -77,13 +70,20 @@ func init() {
 	rootCmd.AddCommand(cosCmd)
 	cosCmd.Flags().SortFlags = false
 
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.CacheDir, "cache-dir", filepath.Join(os.TempDir(), "go-cache"), "location of the local cache directory")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.CacheDir, "cache-dir", filepath.Join(os.TempDir(), "go-cache"), "location of the local cache directory")
 
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Endpoint, "endpoint", "", "specify URL endpoint of the COS instance")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Region, "region", "", "specify region of the COS instance")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.AccessKeyID, "access-key-id", "", "specify access key id of the COS instance")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.SecretAccessKey, "secret-access-key", "", "specify secret access key of the COS instance")
-	cosCmd.Flags().StringVar(&cosCmdSettings.config.Cos.Bucket, "bucket", "", "specify bucket to be used")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.Endpoint, "endpoint", "", "specify URL endpoint of the COS instance")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.Region, "region", "", "specify region of the COS instance")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.AccessKeyID, "access-key-id", "", "specify access key id of the COS instance")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.SecretAccessKey, "secret-access-key", "", "specify secret access key of the COS instance")
+	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.Bucket, "bucket", "", "specify bucket to be used")
+
+	mapOsEnvToConfig("GO_CACHE_PROG_COS_CONFIG", &cosCmdSettings.config)
+	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ENDPOINT", &cosCmdSettings.config.Cos.Endpoint)
+	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_REGION", &cosCmdSettings.config.Cos.Region)
+	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_BUCKET", &cosCmdSettings.config.Cos.Bucket)
+	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ACCESSKEYID", &cosCmdSettings.config.Cos.AccessKeyID)
+	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_SECRETACCESSKEY", &cosCmdSettings.config.Cos.SecretAccessKey)
 }
 
 func mapOsEnvToVarIfSet(key string, target *string) {
