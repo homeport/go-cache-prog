@@ -11,7 +11,7 @@ require (
 require (
 	github.com/IBM/go-sdk-core/v5 v5.23.1 // indirect
 	github.com/fatih/color v1.19.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.14 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
 	github.com/go-openapi/errors v0.22.8 // indirect
 	github.com/go-openapi/strfmt v0.27.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
