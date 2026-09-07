@@ -55,7 +55,7 @@ type provider struct {
 type Config struct {
 	Cos           Cos    `json:"cos"`
 	CacheDir      string `json:"cache_dir"`
-	MinUploadSize int64  `json:"min_upload_size"`
+	MinUploadSize int64  `json:"min_upload_size,omitempty"`
 }
 
 type Cos struct {
@@ -66,8 +66,8 @@ type Cos struct {
 	AccessKeyID     string `json:"access_key_id"`
 	SecretAccessKey string `json:"secret_access_key"`
 
-	Timeout    time.Duration `json:"timeout"`
-	MaxRetries int           `json:"max_retries"`
+	Timeout    time.Duration `json:"timeout,omitempty"`
+	MaxRetries int           `json:"max_retries,omitempty"`
 }
 
 var _ cache.Provider = &provider{}

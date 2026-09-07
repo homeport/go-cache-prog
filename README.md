@@ -13,6 +13,19 @@ This is a proof-of-concept tool and subject to change.
 
 ## Usage
 
+### Quick setup (recommended)
+
+If you have the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli) installed and are logged in (`ibmcloud login`), the `config-helper` command guides you through an interactive setup and generates a ready-to-use config JSON:
+
+```sh
+export GO_CACHE_PROG_COS_CONFIG=$(go-cache-prog cos config-helper)
+export GOCACHEPROG="go-cache-prog cos"
+```
+
+`config-helper` walks you through selecting a COS instance, HMAC credentials, bucket, endpoint variant, and local cache directory — all with arrow-key navigation. The resulting JSON is printed to stdout and can be stored as a CI/CD secret.
+
+### Manual setup
+
 Log into your IBM Cloud account and create a new COS instance in a region that is close to your location to minimize time of objects spend in transit. Create a bucket in your COS instance to be used as the cache. Generate HMAC credentials for your COS instance. Setup your shell to use `go-cache-prog` by exporting the following environment variables:
 
 ```sh
@@ -25,7 +38,31 @@ export GO_CACHE_PROG_COS_SECRETACCESSKEY=<secret-access-key>
 export GOCACHEPROG="go-cache-prog cos"
 ```
 
-The endpoint, region, bucket, and credentials can alternatively be configured via command-line flags, too.
+The endpoint, region, bucket, and credentials can alternatively be configured via command-line flags.
+
+### JSON config via `GO_CACHE_PROG_COS_CONFIG`
+
+All COS settings can be supplied as a single JSON string in the `GO_CACHE_PROG_COS_CONFIG` environment variable. This is especially convenient for CI/CD pipelines where storing one secret is easier than five:
+
+```sh
+export GO_CACHE_PROG_COS_CONFIG='{
+  "cos": {
+    "endpoint": "s3.us-south.cloud-object-storage.appdomain.cloud",
+    "region": "us-south",
+    "bucket": "my-cache-bucket",
+    "access_key_id": "abc123",
+    "secret_access_key": "supersecret"
+  },
+  "cache_dir": "/tmp/go-cache"
+}'
+export GOCACHEPROG="go-cache-prog cos"
+```
+
+**Configuration precedence** (highest wins):
+
+1. CLI flags (e.g. `--endpoint`, `--bucket`)
+2. Individual environment variables (`GO_CACHE_PROG_COS_ENDPOINT`, `GO_CACHE_PROG_COS_REGION`, `GO_CACHE_PROG_COS_BUCKET`, `GO_CACHE_PROG_COS_ACCESSKEYID`, `GO_CACHE_PROG_COS_SECRETACCESSKEY`, `GO_CACHE_PROG_COS_CACHEDIR`)
+3. `GO_CACHE_PROG_COS_CONFIG` JSON blob (loaded first, overridden by the above)
 
 ## Installation
 

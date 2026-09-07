@@ -44,6 +44,37 @@ var cosCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 
+	// PersistentPreRunE runs after flag parsing so env-var values only fill in
+	// fields that were not explicitly set via a CLI flag. Precedence is:
+	//   GO_CACHE_PROG_COS_CONFIG JSON  <  individual GO_CACHE_PROG_COS_* vars  <  CLI flags
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Load JSON blob first so individual vars and flags can override it.
+		mapOsEnvToConfig("GO_CACHE_PROG_COS_CONFIG", &cosCmdSettings.config)
+
+		// Individual env vars override JSON values, but only when the
+		// corresponding flag was not explicitly provided on the command line.
+		if !cmd.Flags().Changed("endpoint") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ENDPOINT", &cosCmdSettings.config.Cos.Endpoint)
+		}
+		if !cmd.Flags().Changed("region") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_REGION", &cosCmdSettings.config.Cos.Region)
+		}
+		if !cmd.Flags().Changed("bucket") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_BUCKET", &cosCmdSettings.config.Cos.Bucket)
+		}
+		if !cmd.Flags().Changed("access-key-id") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ACCESSKEYID", &cosCmdSettings.config.Cos.AccessKeyID)
+		}
+		if !cmd.Flags().Changed("secret-access-key") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_SECRETACCESSKEY", &cosCmdSettings.config.Cos.SecretAccessKey)
+		}
+		if !cmd.Flags().Changed("cache-dir") {
+			mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_CACHEDIR", &cosCmdSettings.config.CacheDir)
+		}
+
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		provider, err := cos.NewProvider(cosCmdSettings.config)
 		if err != nil {
@@ -77,13 +108,6 @@ func init() {
 	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.AccessKeyID, "access-key-id", "", "specify access key id of the COS instance")
 	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.SecretAccessKey, "secret-access-key", "", "specify secret access key of the COS instance")
 	cosCmd.PersistentFlags().StringVar(&cosCmdSettings.config.Cos.Bucket, "bucket", "", "specify bucket to be used")
-
-	mapOsEnvToConfig("GO_CACHE_PROG_COS_CONFIG", &cosCmdSettings.config)
-	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ENDPOINT", &cosCmdSettings.config.Cos.Endpoint)
-	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_REGION", &cosCmdSettings.config.Cos.Region)
-	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_BUCKET", &cosCmdSettings.config.Cos.Bucket)
-	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_ACCESSKEYID", &cosCmdSettings.config.Cos.AccessKeyID)
-	mapOsEnvToVarIfSet("GO_CACHE_PROG_COS_SECRETACCESSKEY", &cosCmdSettings.config.Cos.SecretAccessKey)
 }
 
 func mapOsEnvToVarIfSet(key string, target *string) {
