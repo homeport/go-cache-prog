@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/IBM/go-sdk-core/v5 v5.23.4 // indirect
+	github.com/IBM/go-sdk-core/v5 v5.23.5 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
 	github.com/go-openapi/errors v0.22.9 // indirect
